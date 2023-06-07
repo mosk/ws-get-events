@@ -1,0 +1,4 @@
+node_modules/
+ics/*.*
+.DS_Store
+*.html
