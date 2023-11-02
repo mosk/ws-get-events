@@ -2,3 +2,5 @@ node_modules/
 ics/*.*
 .DS_Store
 *.html
+.env
+.vscode/
