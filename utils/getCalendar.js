@@ -1,64 +1,64 @@
-import https from "https";
+import * as ics from "ics";
+import { writeFileSync } from "fs";
+import { v4 as uuid } from "uuid";
+import { name } from "../index.js";
 
-const address = `tools.emailmatrix.ru`;
+const pathICS = `https://port25.ru/istatic/ws/ics/`; // path to upload ics
 
 const getCalendar = (dataObj) => {
-    const dataJSON = JSON.stringify({
-        "apikey" : dataObj.apikey,
-        "start" : dataObj.start,
-        "end" : dataObj.end,
-        "timezone" : "Europe/Moscow",
-        "title" : dataObj.title,
-        "description" : dataObj.description
-    });
+  const dataJSON = JSON.stringify({
+    apikey: dataObj.apikey,
+    start: dataObj.start,
+    end: dataObj.end,
+    timezone: "Europe/Moscow",
+    title: dataObj.title,
+    description: dataObj.description,
+  });
 
-    return new Promise ((resolve, reject) => {
-        const newData = dataJSON;
-        
-        const options = {
-            hostname: address,
-            port: 443,
-            path: "/event-generator/",
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
-        };
-    
-        const req = https.request(options, res => {
-            if (res.statusCode < 200 || res.statusCode >= 300) {
-                // console.log(dataObj.id);
-                // console.log(newData);
-                
-                return reject(new Error('statusCode=' + res.statusCode));
-            }
+  return new Promise((resolve, reject) => {
+    const title = encodeURI(dataObj.title);
+    const desc = encodeURI(dataObj.description);
+    const start = dataObj.start.split("-").join("").split(":").join("").split(" ").join("T");
+    const end = dataObj.end.split("-").join("").split(":").join("").split(" ").join("T");
+    const ICSname = uuid();
 
-            let body = [];
-            let answerObj;
-          
-            res.on('data', answer => {
-                body.push(answer);
-            });
-            
-            res.on('end', () => {
-                body = JSON.parse(Buffer.concat(body).toString());
+    const make = (err) => {
+      if (err) {
+        return reject(new Error("statusCode=" + err));
+      }
 
-                dataObj.ics = body.ics;
-                dataObj.google = body.google;
-    
-                console.log(dataObj);
+      dataObj.ics = `${pathICS}${name}--${ICSname}.ics`;
+      dataObj.google = `https://www.google.com/calendar/render?action=TEMPLATE&text=${title}&dates=${start}00Z-06:00/${end}00Z-06:00&details=${desc}&sf=true&output=xml`;
 
-                resolve(dataObj);
-            });
-        });
-    
-        req.on('error', error => {
-            console.log(error.message);
-        });
+      ics.createEvent(
+        {
+          title: dataObj.title,
+          description: dataObj.description,
+          start: [
+            +dataObj.start.split("-")[0],
+            +dataObj.start.split("-")[1],
+            +dataObj.start.split("-")[2].split(" ")[0],
+            +dataObj.start.split(" ")[1].split(":")[0],
+            +dataObj.start.split(" ")[1].split(":")[1],
+          ],
+          duration: { hours: 3 },
+        },
+        (error, value) => {
+          if (error) {
+            console.log(error);
+          }
 
-        req.write(newData);
-        req.end();
-    });
+          writeFileSync(`ics/${name}--${ICSname}.ics`, value);
+        }
+      );
+
+      console.log(dataObj);
+
+      resolve(dataObj);
+    };
+
+    make();
+  });
 };
 
 export default getCalendar;

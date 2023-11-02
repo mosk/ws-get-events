@@ -1,4 +1,5 @@
 node_modules/
-ics/*.*
+ics/*
 .DS_Store
+.vscode
 *.html

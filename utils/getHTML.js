@@ -1,6 +1,6 @@
 const renderEvent = (data, type = `regular`) => {
-    if (type == `regular`) {
-      return `
+  if (type == `regular`) {
+    return `
     <td class="col" valign="top" width="300" style="display: inline-block; width: 300px; padding: 0; padding-bottom: 50px;">
         <table cellpadding="0" cellspacing="0" width="100%">
             <tr>
@@ -107,8 +107,8 @@ const renderEvent = (data, type = `regular`) => {
             </tr>
         </table>
     </td>`;
-    } else if (type == `fullwidth`) {
-      return `
+  } else if (type == `fullwidth`) {
+    return `
     <td class="col col--1" valign="top" width="300" style="display: inline-block; width: 300px; padding: 0; padding-bottom: 50px;">
         <table cellpadding="0" cellspacing="0" width="100%">
             <tr>
@@ -217,54 +217,54 @@ const renderEvent = (data, type = `regular`) => {
             </tr>
         </table>
     </td>`;
-    } else {
-      console.log(`Error`);
+  } else {
+    console.log(`Error`);
 
-      return null;
-    }
+    return null;
+  }
 };
 
 const getHTML = (events) => {
-    let eventsList = `
+  let eventsList = `
 <tr>
 <td style="padding: 0; padding-left: 10px; padding-right: 10px;">
 <table cellpadding="0" cellspacing="0" width="100%">
 <tr style="font-size: 0; text-align: center;">`;
 
-    for (let i = 0; i < events.length; i++) {
-        let event = events[i];
-        let eventNumber = i + 1;
+  for (let i = 0; i < events.length; i++) {
+    let event = events[i];
+    let eventNumber = i + 1;
 
-        // console.log(eventNumber, event.title);
+    // console.log(eventNumber, event.title);
 
-        if (eventNumber == events.length && eventNumber % 2 != 0) {
-            eventsList += renderEvent(event, `fullwidth`);
-            eventsList += `
+    if (eventNumber == events.length && eventNumber % 2 != 0) {
+      eventsList += renderEvent(event, `fullwidth`);
+      eventsList += `
 </tr>
 </table>
 </td>
 </tr>`;
-        } else if (eventNumber == events.length && eventNumber % 2 == 0) {
-            eventsList += renderEvent(event);
-            eventsList += `
+    } else if (eventNumber == events.length && eventNumber % 2 == 0) {
+      eventsList += renderEvent(event);
+      eventsList += `
 </tr>
 </table>
 </td>
 </tr>`;
-        } else {
-            eventsList += renderEvent(event);
+    } else {
+      eventsList += renderEvent(event);
 
-            if (eventNumber % 2 == 0 && eventNumber != events.length) {
-                eventsList += `
+      if (eventNumber % 2 == 0 && eventNumber != events.length) {
+        eventsList += `
 </tr>
 </table>
 <table cellpadding="0" cellspacing="0" width="100%">
 <tr style="font-size: 0; text-align: center;">`;
-            }
-        };
-    };
-  
-    return eventsList;
+      }
+    }
+  }
+
+  return eventsList;
 };
 
 export default getHTML;
