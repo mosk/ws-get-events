@@ -37,8 +37,10 @@ const convertDate = (str) => {
     i++;
   }
 
-  if (month < 10) {
+  if (month < 9) {
     month = `0${month + 1}`;
+  } else {
+    month = `${month + 1}`;
   }
 
   // hour & minute
